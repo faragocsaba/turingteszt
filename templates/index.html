@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beküldő felület</title>
+</head>
+<body>
+    <h1>Turing-teszt</h1>
+
+    {% if is_admin %}
+        <form action="/" method="post">
+            <input type="hidden" name="is_admin" value="False">
+            <button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos nem admin módba szerenél lépni?')">Nem admin módba lép</button>
+        </form>
+    {% else %}
+        <form action="/" method="post">
+            <input type="hidden" name="is_admin" value="True">
+            <button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos admin módba szerenél lépni?')">Admin módba lép</button>
+        </form>
+    {% endif %}
+
+    <hr>
+
+    {% if game %}
+
+        {% if is_admin %}
+            <form action="/" method="post">
+                <input type="hidden" name="is_admin" value={{ is_admin }}>
+                <button type="submit" name="action" value="generate" onclick="return confirm('Biztosan új kódot szeretnél generálni?')">Új kódot generál</button>
+            </form>
+        {% else %}
+            <form action="/" method="post">
+                <input type="hidden" name="is_admin" value={{ is_admin }}>
+                <input type="text" name="game" size="5" placeholder="Kód" required>
+                <button type="submit" name="action" value="setcode" onclick="return confirm('Biztosan meg szeretnéd változtatni a kódot?')">Kódot változtat</button>
+            </form>
+        {% endif %}
+
+        <p>Kód: {{ game }}</pp>
+
+        {% if prompt %}
+            <p>Prompt: {{prompt}}</p>
+        {% endif %}
+
+        {% if is_admin %}
+            {% if not is_final %}
+                <form action="/" method="post">
+                    <input type="hidden" name="game" value={{ game }}>
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <button type="submit" name="action" value="finalize" onclick="return confirm('Biztosan véglegesíteni szeretnéd?')">Véglegesít</button>
+                </form>
+            {% endif %}
+            <h2>Beküldött mondatok:</h2>
+            <ul>
+                {% for sentence in sentences %}
+                    <li>{{ sentence[0] }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if not is_final %}
+                <form action="/" method="post">
+                    <input type="hidden" name="game" value={{ game }}>
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <button type="submit" name="action" value="refresh">Frissít</button>
+                </form>
+            {% endif %}
+            <hr>
+        {% endif %}
+
+        {% if is_final %}
+            <p>A játszma véglegesítve lett.<p>
+        {% endif %}
+
+        {% if not is_admin %}
+
+            {% if is_final %}
+                {% if guessed %}
+                    <p>Tipp eredmány: {{ message }}</p>
+                {% else %}
+                    <form action="/" method="post">
+                        <input type="hidden" name="game" value={{ game }}>
+                        <input type="hidden" name="is_admin" value={{ is_admin }}>
+
+                        {% for sentence in sentences %}
+                            <input type="radio" name="guess" value={{ sentence[1] }}>
+                            <label for="html">{{ sentence[0] }}</label><br>
+                        {% endfor %}
+
+                        <button type="submit" name="action" value="guess">Tippel</button>
+                    </form>
+                {% endif %}
+
+            {% elif message %}
+                <p>{{ message }}</p>
+                <form action="/" method="post">
+                    <input type="hidden" name="game" value={{ game }}>
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <button type="submit" name="action" value="continue">Folytat</button>
+                </form>
+            {% else %}
+                <form action="/" method="post">
+                    <input type="hidden" name="game" value={{ game }}>
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <input type="text" name="sentence" size="50" placeholder="Írj egy meghatározást (legalább 3, legfeljebb 5 szó)...">
+                    <button type="submit" name="action" value="submit">Beküld</button>
+                </form>
+            {% endif %}
+
+        {% endif %}
+
+    {% else %}
+
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+
+        {% if is_admin %}
+            <form action="/" method="post">
+                <input type="hidden" name="is_admin" value={{ is_admin }}>
+                <input type="checkbox" name="is_custom_prompt" id="is_custom_prompt" onclick="document.getElementById('custom_prompt_fields').hidden=!document.getElementById('is_custom_prompt').checked"><span>Saját prompt megadása</span><br>
+                <div id="custom_prompt_fields" hidden>
+                    <input type="text" name="custom_prompt" size="50" placeholder="Saját prompt"><br>
+                    <input type="text" name="custom_answer" size="50" placeholder="Saját válasz">
+                </div>
+                <br><button type="submit" name="action" value="generate">Kódot generál</button>
+            </form>
+        {% else %}
+            <form action="/" method="post">
+                <input type="hidden" name="is_admin" value={{ is_admin }}>
+                <input type="text" name="game" size="5" placeholder="Kód" required>
+                <button type="submit" name="action" value="setcode">Kódot megad</button>
+            </form>
+        {% endif %}
+
+    {% endif %}
+</body>
+</html>
