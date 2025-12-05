@@ -3,235 +3,260 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beküldő felület</title>
-	<style>
-		/* Alapbeállítások */
-		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background-color: #f4f6f8; /* Halvány szürkéskék háttér */
-			color: #333;
-			margin: 0;
-			padding: 40px;
-			display: flex;
-			justify-content: center;
-		}
+    <style>
+        /* Alapbeállítások */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8; /* Halvány szürkéskék háttér */
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
 
-		/* A tartalom doboza */
-		.container {
-			background-color: #ffffff;
-			padding: 30px;
-			border-radius: 8px;
-			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-			width: 100%;
-			max-width: 500px;
-		}
+        /* A tartalom doboza */
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
 
-		h1, h2, h3 {
-			text-align: center;
-			color: #2c3e50;
-			margin-top: 0;
-		}
+        h1, h2, h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+        }
 
-		/* Input mezők */
-		input[type="text"], input[type="number"], select, textarea {
-			width: 100%;
-			padding: 10px;
-			margin: 8px 0 20px 0;
-			display: inline-block;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			box-sizing: border-box;
-		}
+        /* Input mezők */
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
-		/* --- A MÓDOSÍTOTT GOMB STÍLUS --- */
-		button, input[type="submit"] {
-			width: auto; /* Csak akkora, amekkora a szöveg */
-			min-width: 100px; /* De azért ne legyen túl pici sem */
+        /* --- A MÓDOSÍTOTT GOMB STÍLUS --- */
+        button, input[type="submit"] {
+            width: auto; /* Csak akkora, amekkora a szöveg */
+            min-width: 100px; /* De azért ne legyen túl pici sem */
 
-			background-color: #e6f2ff; /* Nagyon halvány kék */
-			color: #222222; /* Majdnem fekete szöveg */
-			border: 1px solid #b3d7ff; /* Vékony kék keret a kontúrért */
+            background-color: #e6f2ff; /* Nagyon halvány kék */
+            color: #222222; /* Majdnem fekete szöveg */
+            border: 1px solid #b3d7ff; /* Vékony kék keret a kontúrért */
 
-			padding: 10px 20px;
-			margin-top: 10px;
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 15px;
-			font-weight: 600; /* Kicsit vastagabb betű */
-			transition: background-color 0.2s; /* Finom átmenet hoverkor */
-		}
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600; /* Kicsit vastagabb betű */
+            transition: background-color 0.2s; /* Finom átmenet hoverkor */
+        }
 
-		/* Gomb hover (ha ráviszed az egeret) */
-		button:hover, input[type="submit"]:hover {
-			background-color: #cfe6ff; /* Kicsit sötétedik, de még mindig halvány */
-			border-color: #99caff;
-		}
-	</style>
+        /* Gomb hover (ha ráviszed az egeret) */
+        button:hover, input[type="submit"]:hover {
+            background-color: #cfe6ff; /* Kicsit sötétedik, de még mindig halvány */
+            border-color: #99caff;
+        }
+
+        /* --- IMPRESSZUM (LÁBLÉC) --- */
+        .footer {
+            margin-top: 40px;          /* Távolság a fenti tartalomtól */
+            padding-top: 15px;         /* Távolság a vonaltól a szövegig */
+            border-top: 1px solid #eeeeee; /* Egy nagyon halvány elválasztó vonal */
+            text-align: center;        /* Középre igazítás */
+            font-size: 13px;           /* Kisebb betűméret */
+            color: #888888;            /* Szürke szín, hogy ne legyen tolakodó */
+        }
+
+        .footer a {
+            color: #666666;            /* A link kicsit sötétebb szürke */
+            text-decoration: none;     /* Ne legyen aláhúzva alapból */
+            font-weight: 600;          /* A neved legyen kicsit vastagabb */
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #007bff;            /* Ha ráviszed az egeret, legyen kék */
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-		<h1>Turing-teszt</h1>
+        <h1>Turing-teszt</h1>
 
-		{% if is_admin %}
-			<form action="/" method="post">
-				<input type="hidden" name="is_admin" value="False">
-				<button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos nem admin módba szerenél lépni?')">Nem admin módba lép</button>
-			</form>
-		{% else %}
-			<form action="/" method="post">
-				<input type="hidden" name="is_admin" value="True">
-				<button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos admin módba szerenél lépni?')">Admin módba lép</button>
-			</form>
-		{% endif %}
+        {% if is_admin %}
+            <form action="/" method="post">
+                <input type="hidden" name="is_admin" value="False">
+                <button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos nem admin módba szerenél lépni?')">Nem admin módba lép</button>
+            </form>
+        {% else %}
+            <form action="/" method="post">
+                <input type="hidden" name="is_admin" value="True">
+                <button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos admin módba szerenél lépni?')">Admin módba lép</button>
+            </form>
+        {% endif %}
 
-		<hr>
+        <hr>
 
-		{% if game %}
+        {% if game %}
 
-			{% if is_admin %}
-				<form action="/" method="post">
-					<input type="hidden" name="is_admin" value={{ is_admin }}>
-					<button type="submit" name="action" value="generate" onclick="return confirm('Biztosan új kódot szeretnél generálni?')">Új kódot generál</button>
-				</form>
-			{% else %}
-				<form action="/" method="post">
-					<input type="hidden" name="is_admin" value={{ is_admin }}>
-					<input type="text" name="game" size="5" placeholder="Kód" required>
-					<button type="submit" name="action" value="setcode" onclick="return confirm('Biztosan meg szeretnéd változtatni a kódot?')">Kódot változtat</button>
-				</form>
-			{% endif %}
+            {% if is_admin %}
+                <form action="/" method="post">
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <button type="submit" name="action" value="generate" onclick="return confirm('Biztosan új kódot szeretnél generálni?')">Új kódot generál</button>
+                </form>
+            {% else %}
+                <form action="/" method="post">
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <input type="text" name="game" size="5" placeholder="Kód" required>
+                    <button type="submit" name="action" value="setcode" onclick="return confirm('Biztosan meg szeretnéd változtatni a kódot?')">Kódot változtat</button>
+                </form>
+            {% endif %}
 
-			<p>Kód: {{ game }}</pp>
+            <p>Kód: {{ game }}</pp>
 
-			{% if prompt %}
-				<p>Prompt: {{prompt}}</p>
-			{% endif %}
+            {% if prompt %}
+                <p>Prompt: {{prompt}}</p>
+            {% endif %}
 
-			{% if is_admin %}
-				{% if not is_final %}
-					<form action="/" method="post">
-						<input type="hidden" name="game" value={{ game }}>
-						<input type="hidden" name="is_admin" value={{ is_admin }}>
-						<button type="submit" name="action" value="finalize" onclick="return confirm('Biztosan véglegesíteni szeretnéd?')">Véglegesít</button>
-					</form>
-				{% endif %}
-				<h2>Beküldött mondatok:</h2>
-				<ul id="sentences-list">
-					{% for sentence in sentences %}
-						<li>{{ sentence[0] }}</li>
-					{% endfor %}
-				</ul>
+            {% if is_admin %}
+                {% if not is_final %}
+                    <form action="/" method="post">
+                        <input type="hidden" name="game" value={{ game }}>
+                        <input type="hidden" name="is_admin" value={{ is_admin }}>
+                        <button type="submit" name="action" value="finalize" onclick="return confirm('Biztosan véglegesíteni szeretnéd?')">Véglegesít</button>
+                    </form>
+                {% endif %}
+                <h2>Beküldött mondatok:</h2>
+                <ul id="sentences-list">
+                    {% for sentence in sentences %}
+                        <li>{{ sentence[0] }}</li>
+                    {% endfor %}
+                </ul>
 
-				{% if not is_final %}
-					<p><i>Várakozás a válaszokra... (az oldal automatikusan frissül)</i></p>
-				{% endif %}
-				<hr>
-			{% endif %}
+                {% if not is_final %}
+                    <p><i>Várakozás a válaszokra... (az oldal automatikusan frissül)</i></p>
+                {% endif %}
+                <hr>
+            {% endif %}
 
-			{% if is_final %}
-				<p>A játszma véglegesítve lett.<p>
-			{% endif %}
+            {% if is_final %}
+                <p>A játszma véglegesítve lett.<p>
+            {% endif %}
 
-			{% if not is_admin %}
+            {% if not is_admin %}
 
-				{% if is_final %}
-					{% if guessed %}
-						<p>Tipp eredmány: {{ message }}</p>
-					{% else %}
-						<form action="/" method="post">
-							<input type="hidden" name="game" value={{ game }}>
-							<input type="hidden" name="is_admin" value={{ is_admin }}>
+                {% if is_final %}
+                    {% if guessed %}
+                        <p>Tipp eredmány: {{ message }}</p>
+                    {% else %}
+                        <form action="/" method="post">
+                            <input type="hidden" name="game" value={{ game }}>
+                            <input type="hidden" name="is_admin" value={{ is_admin }}>
 
-							{% for sentence in sentences %}
-								<input type="radio" name="guess" value={{ sentence[1] }}>
-								<label for="html">{{ sentence[0] }}</label><br>
-							{% endfor %}
+                            {% for sentence in sentences %}
+                                <input type="radio" name="guess" value={{ sentence[1] }}>
+                                <label for="html">{{ sentence[0] }}</label><br>
+                            {% endfor %}
 
-							<button type="submit" name="action" value="guess">Tippel</button>
-						</form>
-					{% endif %}
+                            <button type="submit" name="action" value="guess">Tippel</button>
+                        </form>
+                    {% endif %}
 
-				{% elif message %}
-					<p>{{ message }}</p>
-					<p><b>Kérlek várj, amíg a Játékmester lezárja a kört...</b></p>
-					<div style="display:none;">
-						<form action="/" method="post">
-							<input type="hidden" name="game" value={{ game }}>
-							<input type="hidden" name="is_admin" value={{ is_admin }}>
-							<button type="submit" name="action" value="continue">Folytat</button>
-						</form>
-					</div>
-				{% else %}
-					<form action="/" method="post">
-						<input type="hidden" name="game" value={{ game }}>
-						<input type="hidden" name="is_admin" value={{ is_admin }}>
-						<input type="text" name="sentence" size="50" placeholder="Írj egy meghatározást (legalább 3, legfeljebb 5 szó)...">
-						<button type="submit" name="action" value="submit">Beküld</button>
-					</form>
-				{% endif %}
+                {% elif message %}
+                    <p>{{ message }}</p>
+                    <p><b>Kérlek várj, amíg a Játékmester lezárja a kört...</b></p>
+                    <div style="display:none;">
+                        <form action="/" method="post">
+                            <input type="hidden" name="game" value={{ game }}>
+                            <input type="hidden" name="is_admin" value={{ is_admin }}>
+                            <button type="submit" name="action" value="continue">Folytat</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <form action="/" method="post">
+                        <input type="hidden" name="game" value={{ game }}>
+                        <input type="hidden" name="is_admin" value={{ is_admin }}>
+                        <input type="text" name="sentence" size="50" placeholder="Írj egy meghatározást (legalább 3, legfeljebb 5 szó)...">
+                        <button type="submit" name="action" value="submit">Beküld</button>
+                    </form>
+                {% endif %}
 
-			{% endif %}
+            {% endif %}
 
-		{% else %}
-			{% if message %}
-				<p>{{ message }}</p>
-			{% endif %}
+        {% else %}
+            {% if message %}
+                <p>{{ message }}</p>
+            {% endif %}
 
-			{% if is_admin %}
-				<form action="/" method="post">
-					<input type="hidden" name="is_admin" value={{ is_admin }}>
-					<input type="checkbox" name="is_custom_prompt" id="is_custom_prompt" onclick="document.getElementById('custom_prompt_fields').hidden=!document.getElementById('is_custom_prompt').checked"><span>Saját prompt megadása</span><br>
-					<div id="custom_prompt_fields" hidden>
-						<input type="text" name="custom_prompt" size="50" placeholder="Saját prompt"><br>
-						<input type="text" name="custom_answer" size="50" placeholder="Saját válasz">
-					</div>
-					<br><button type="submit" name="action" value="generate">Kódot generál</button>
-				</form>
-			{% else %}
-				<form action="/" method="post">
-					<input type="hidden" name="is_admin" value={{ is_admin }}>
-					<input type="text" name="game" size="5" placeholder="Kód" required>
-					<button type="submit" name="action" value="setcode">Kódot megad</button>
-				</form>
-			{% endif %}
+            {% if is_admin %}
+                <form action="/" method="post">
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <input type="checkbox" name="is_custom_prompt" id="is_custom_prompt" onclick="document.getElementById('custom_prompt_fields').hidden=!document.getElementById('is_custom_prompt').checked"><span>Saját prompt megadása</span><br>
+                    <div id="custom_prompt_fields" hidden>
+                        <input type="text" name="custom_prompt" size="50" placeholder="Saját prompt"><br>
+                        <input type="text" name="custom_answer" size="50" placeholder="Saját válasz">
+                    </div>
+                    <br><button type="submit" name="action" value="generate">Kódot generál</button>
+                </form>
+            {% else %}
+                <form action="/" method="post">
+                    <input type="hidden" name="is_admin" value={{ is_admin }}>
+                    <input type="text" name="game" size="5" placeholder="Kód" required>
+                    <button type="submit" name="action" value="setcode">Kódot megad</button>
+                </form>
+            {% endif %}
 
-		{% endif %}
+        {% endif %}
 
-		{% if game %}
-		<script>
-			const gameId = "{{ game }}";
-			const isAdmin = {{ 'true' if is_admin else 'false' }};
-			let currentSentenceCount = {{ sentences|length }};
-			let isFinal = {{ 'true' if is_final else 'false' }};
+        {% if game %}
+        <script>
+            const gameId = "{{ game }}";
+            const isAdmin = {{ 'true' if is_admin else 'false' }};
+            let currentSentenceCount = {{ sentences|length }};
+            let isFinal = {{ 'true' if is_final else 'false' }};
 
-			setInterval(function() {
-				if (!isAdmin && isFinal) return;
+            setInterval(function() {
+                if (!isAdmin && isFinal) return;
 
-				fetch('/get_game_status?game=' + gameId)
-				.then(response => response.json())
-				.then(data => {
-					if (data.exists) {
-						// Segédfüggvény az újratöltéshez paraméterekkel
-						const reloadWithState = () => {
-							window.location.href = "/?game=" + gameId + "&is_admin=" + (isAdmin ? 'True' : 'False');
-						};
+                fetch('/get_game_status?game=' + gameId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // Segédfüggvény az újratöltéshez paraméterekkel
+                        const reloadWithState = () => {
+                            window.location.href = "/?game=" + gameId + "&is_admin=" + (isAdmin ? 'True' : 'False');
+                        };
 
-						if (isAdmin) {
-							if (data.sentence_count > currentSentenceCount) {
-								console.log("Új válasz érkezett, frissítés...");
-								reloadWithState(); // ITT HÍVJUK MEG
-							}
-						} else {
-							if (data.is_final === true && isFinal === false) {
-								console.log("A játék lezárult, frissítés a tippeléshez...");
-								reloadWithState(); // ITT IS
-							}
-						}
-					}
-				})
-				.catch(error => console.error('Hiba:', error));
-			}, 2000);
-		</script>
-		{% endif %}
-	</div>
+                        if (isAdmin) {
+                            if (data.sentence_count > currentSentenceCount) {
+                                console.log("Új válasz érkezett, frissítés...");
+                                reloadWithState(); // ITT HÍVJUK MEG
+                            }
+                        } else {
+                            if (data.is_final === true && isFinal === false) {
+                                console.log("A játék lezárult, frissítés a tippeléshez...");
+                                reloadWithState(); // ITT IS
+                            }
+                        }
+                    }
+                })
+                .catch(error => console.error('Hiba:', error));
+            }, 2000);
+        </script>
+        {% endif %}
+        <div class="footer">
+            A játék kitalálója és megalkotója: <a href="http://faragocsaba.hu" target="_blank">Faragó Csaba</a>
+        </div>		
+    </div>
 </body>
 </html>
