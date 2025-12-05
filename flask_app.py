@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import mysql.connector # pip install mysql-connector-python
 import random
 import configparser
@@ -47,22 +47,34 @@ def insert_into_database(insert_command, values):
         database_connection.commit()
     database_connection.close()
 
+@app.route('/get_game_status', methods=['GET'])
+def get_game_status():
+    game_id = request.args.get('game')
+
+    if game_id in games:
+        current_game = games[game_id]
+        return jsonify({
+            'exists': True,
+            'sentence_count': len(current_game.sentences),
+            'is_final': current_game.is_final
+        })
+    else:
+        return jsonify({'exists': False})
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     global games
 
     message = None
-    is_admin = False
     action = 'refresh'
-    game = None
     guessed = False
+
+    is_admin = request.values.get('is_admin') == 'True'
+    game = request.values.get('game')
+
     if request.method == 'POST':
-        if 'is_admin' in request.form:
-            is_admin = request.form['is_admin'] == 'True'
         if 'action' in request.form:
             action = request.form['action']
-        if 'game' in request.form:
-            game = request.form['game']
 
         if action == 'generate':
             game = str(random.randint(100, 1000))

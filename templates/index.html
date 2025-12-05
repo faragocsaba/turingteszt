@@ -51,18 +51,14 @@
                 </form>
             {% endif %}
             <h2>Beküldött mondatok:</h2>
-            <ul>
+            <ul id="sentences-list">
                 {% for sentence in sentences %}
                     <li>{{ sentence[0] }}</li>
                 {% endfor %}
             </ul>
 
             {% if not is_final %}
-                <form action="/" method="post">
-                    <input type="hidden" name="game" value={{ game }}>
-                    <input type="hidden" name="is_admin" value={{ is_admin }}>
-                    <button type="submit" name="action" value="refresh">Frissít</button>
-                </form>
+                <p><i>Várakozás a válaszokra... (az oldal automatikusan frissül)</i></p>
             {% endif %}
             <hr>
         {% endif %}
@@ -92,11 +88,14 @@
 
             {% elif message %}
                 <p>{{ message }}</p>
-                <form action="/" method="post">
-                    <input type="hidden" name="game" value={{ game }}>
-                    <input type="hidden" name="is_admin" value={{ is_admin }}>
-                    <button type="submit" name="action" value="continue">Folytat</button>
-                </form>
+                <p><b>Kérlek várj, amíg a Játékmester lezárja a kört...</b></p>
+                <div style="display:none;">
+                    <form action="/" method="post">
+                        <input type="hidden" name="game" value={{ game }}>
+                        <input type="hidden" name="is_admin" value={{ is_admin }}>
+                        <button type="submit" name="action" value="continue">Folytat</button>
+                    </form>
+                </div>
             {% else %}
                 <form action="/" method="post">
                     <input type="hidden" name="game" value={{ game }}>
@@ -109,7 +108,6 @@
         {% endif %}
 
     {% else %}
-
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
@@ -132,6 +130,43 @@
             </form>
         {% endif %}
 
+    {% endif %}
+
+    {% if game %}
+    <script>
+        const gameId = "{{ game }}";
+        const isAdmin = {{ 'true' if is_admin else 'false' }};
+        let currentSentenceCount = {{ sentences|length }};
+        let isFinal = {{ 'true' if is_final else 'false' }};
+
+        setInterval(function() {
+            if (!isAdmin && isFinal) return;
+
+            fetch('/get_game_status?game=' + gameId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    // Segédfüggvény az újratöltéshez paraméterekkel
+                    const reloadWithState = () => {
+                        window.location.href = "/?game=" + gameId + "&is_admin=" + (isAdmin ? 'True' : 'False');
+                    };
+
+                    if (isAdmin) {
+                        if (data.sentence_count > currentSentenceCount) {
+                            console.log("Új válasz érkezett, frissítés...");
+                            reloadWithState(); // ITT HÍVJUK MEG
+                        }
+                    } else {
+                        if (data.is_final === true && isFinal === false) {
+                            console.log("A játék lezárult, frissítés a tippeléshez...");
+                            reloadWithState(); // ITT IS
+                        }
+                    }
+                }
+            })
+            .catch(error => console.error('Hiba:', error));
+        }, 2000);
+    </script>
     {% endif %}
 </body>
 </html>
