@@ -61,6 +61,18 @@
             border-color: #99caff;
         }
 
+        /* --- ÚJRAKEZDÉS GOMB (SÁRGA) --- */
+        .btn-restart {
+            background-color: #fff9c4; /* Halvány sárga háttér */
+            border-color: #fbc02d;     /* Sötétebb sárga/okker keret */
+            color: #000000;            /* Fekete szöveg */
+        }
+
+        .btn-restart:hover {
+            background-color: #fff59d; /* Kicsit sötétebb sárga, ha ráviszed az egeret */
+            border-color: #f9a825;
+        }
+
         /* --- LÁBLÉC --- */
         .footer {
             margin-top: 40px;
@@ -147,18 +159,27 @@
     <div class="container">
         <h1>Turing-teszt</h1>
 
-        {% if is_admin %}
+        {% if game %}
             <form action="/" method="post">
-                <input type="hidden" name="is_admin" value="False">
-                <button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos nem admin módba szerenél lépni?')">Nem admin módba lép</button>
+                <input type="hidden" name="is_admin" value="{{ is_admin }}">
+
+                <button type="submit" name="action" value="restart" class="btn-restart" onclick="return confirm('Biztosan kilépsz a főmenübe? A jelenlegi játék állása elveszhet.')">
+                    Újrakezdés (Kilépés a menübe)
+                </button>
             </form>
         {% else %}
-            <form action="/" method="post">
-                <input type="hidden" name="is_admin" value="True">
-                <button type="submit" name="action" value="make_nonadmin" onclick="return confirm('Biztos admin módba szerenél lépni?')">Admin módba lép</button>
-            </form>
+            {% if is_admin %}
+                <form action="/" method="post">
+                    <input type="hidden" name="is_admin" value="False">
+                    <button type="submit" name="action" value="make_nonadmin">Játékos módba lép</button>
+                </form>
+            {% else %}
+                <form action="/" method="post">
+                    <input type="hidden" name="is_admin" value="True">
+                    <button type="submit" name="action" value="make_nonadmin">Admin módba lép</button>
+                </form>
+            {% endif %}
         {% endif %}
-
         <hr>
 
         {% if game %}
