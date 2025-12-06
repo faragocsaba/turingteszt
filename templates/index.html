@@ -162,8 +162,9 @@
         {% if game %}
             <form action="/" method="post">
                 <input type="hidden" name="is_admin" value="{{ is_admin }}">
+                <input type="hidden" name="game" value="{{ game }}">
 
-                <button type="submit" name="action" value="restart" class="btn-restart" onclick="return confirm('Biztosan kilépsz a főmenübe? A jelenlegi játék állása elveszhet.')">
+                <button type="submit" name="action" value="restart" class="btn-restart" onclick="return confirm('Biztosan kilépsz a főmenübe? A jelenlegi játék törlésre kerül.')">
                     Újrakezdés (Kilépés a menübe)
                 </button>
             </form>
@@ -295,7 +296,6 @@
                                 const currentSelection = document.querySelector('input[name="game"]:checked')?.value;
 
                                 if (games.length === 0) {
-                                    // Inline style helyett class
                                     container.innerHTML = '<div class="game-list-message">Nincs aktív játék jelenleg.</div>';
                                     return;
                                 }
@@ -304,7 +304,6 @@
                                 games.forEach(g => {
                                     const isChecked = (g.id == currentSelection) ? 'checked' : '';
 
-                                    // Itt a generált HTML-ben is class-okat használunk style helyett
                                     html += `
                                     <label class="game-option-label">
                                         <input type="radio" name="game" value="${g.id}" ${isChecked} required class="game-option-input">
@@ -332,6 +331,7 @@
             let isFinal = {{ 'true' if is_final else 'false' }};
 
             setInterval(function() {
+                // Ha nem admin és vége a játéknak, már nem kell pingelni
                 if (!isAdmin && isFinal) return;
 
                 fetch('/get_game_status?game=' + gameId)
@@ -353,6 +353,10 @@
                                 reloadWithState();
                             }
                         }
+                    } else {
+                        // Ha a szerver azt mondja, nem létezik (mert törlődött)
+                        alert("A játékot az admin leállította vagy megszakadt a kapcsolat.");
+                        window.location.href = "/?is_admin=" + (isAdmin ? 'True' : 'False');
                     }
                 })
                 .catch(error => console.error('Hiba:', error));
