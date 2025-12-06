@@ -125,6 +125,20 @@ def home():
         guessed = guessed
     )
 
+@app.route('/list_games')
+def list_games():
+    global games
+    available_games = []
+    for game_id in games:
+        game = games[game_id]
+        if not game.is_final:
+            available_games.append({
+                'id': game_id,
+                'name': f"Játék #{game_id}"
+            })
+    return jsonify(available_games)
+
+
 initialize_prompts() # in PythonAnywhere this does not work if moved into name main check, and could no figure out why
 if __name__ == '__main__':
     app.run()
